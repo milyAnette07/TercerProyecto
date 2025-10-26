@@ -2,10 +2,15 @@
   "name": "forkify",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "source:": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel  index.html",
+    "build": "parcel build index.html"
   },
   "author": "milyramirez",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.16.0",
+    "parcel": "^2.16.0"
+  }
 }
