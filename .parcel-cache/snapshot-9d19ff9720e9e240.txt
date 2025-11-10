@@ -1,4 +1,4 @@
-3654
+3656
 78C:\Users\mildr\Documents\forkify\node_modules\.bin\download-lmdb-prebuilds.ps1134059724620352453 0
 72C:\Users\mildr\Documents\forkify\node_modules\@parcel\cache\src\index.js134059724590357579 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\DO.js134059724607249830 0
@@ -17,13 +17,13 @@
 58C:\Users\mildr\Documents\forkify\node_modules\lmdb\LICENSE134059724591867874 0
 69C:\Users\mildr\Documents\forkify\node_modules\ordered-binary\index.js134059724587741877 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\RU.js134059724615598844 0
-37C:\Users\mildr\Documents\forkify\dist134067862037625422 1
+37C:\Users\mildr\Documents\forkify\dist134072127201175047 1
 93C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\_\_class_private_field_destructure134059724603239531 1
 74C:\Users\mildr\Documents\forkify\node_modules\@parcel\cache\lib\types.d.ts134059724591867874 0
 93C:\Users\mildr\Documents\forkify\node_modules\@parcel\transformer-json\lib\JSONTransformer.js134059724585973099 0
 81C:\Users\mildr\Documents\forkify\node_modules\type-fest\source\readonly-deep.d.ts134059724594028362 0
 76C:\Users\mildr\Documents\forkify\node_modules\postcss-value-parser\README.md134059724589880834 0
-43C:\Users\mildr\Documents\forkify\index.html134059729369437148 0
+43C:\Users\mildr\Documents\forkify\index.html134072026339624398 0
 87C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\_\_class_private_method_init134059724603568348 1
 74C:\Users\mildr\Documents\forkify\node_modules\semver\internal\constants.js134059724590603446 0
 53C:\Users\mildr\Documents\forkify\node_modules\globals134059724589018366 1
@@ -54,7 +54,7 @@
 68C:\Users\mildr\Documents\forkify\node_modules\picomatch\package.json134059724590041911 0
 90C:\Users\mildr\Documents\forkify\node_modules\@parcel\workers\src\process\ProcessWorker.js134059724594266488 0
 58C:\Users\mildr\Documents\forkify\src\sass\_components.scss134049630255107574 0
-58C:\Users\mildr\Documents\forkify\dist\favicon.8b2f57bf.png134067862031712121 0
+58C:\Users\mildr\Documents\forkify\dist\favicon.8b2f57bf.png134072121660591049 0
 55C:\Users\mildr\Documents\forkify\node_modules\.bin\sass134059724927802470 0
 66C:\Users\mildr\Documents\forkify\node_modules\@lmdb\lmdb-win32-x64134059724593193432 1
 65C:\Users\mildr\Documents\forkify\node_modules\commander\Readme.md134059724591251258 0
@@ -66,7 +66,7 @@
 83C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\css-has.js134059724601958113 0
 82C:\Users\mildr\Documents\forkify\node_modules\@parcel\codeframe\test\fixtures\a.js134059724586055812 0
 83C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\src\_async_generator.mjs134059724608281273 0
-39C:\Users\mildr\Documents\forkify\src\js134049630254831293 1
+39C:\Users\mildr\Documents\forkify\src\js134072078815874647 1
 41C:\Users\mildr\Documents\forkify\src\sass134049630255575397 1
 60C:\Users\mildr\Documents\forkify\node_modules\parcel\LICENSE134059724585202372 0
 63C:\Users\mildr\Documents\forkify\node_modules\semver\preload.js134059724594419277 0
@@ -127,11 +127,26 @@
 54C:\Users\mildr\Documents\forkify\src\sass\_upload.scss134049630255525555 0
 89C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\trusted-types.js134059724617670767 0
 85C:\Users\mildr\Documents\forkify\node_modules\@parcel\core\lib\dumpGraphToGraphViz.js134059724596732993 0
-53C:\Users\mildr\Documents\forkify\src\js\controller.js134065917617156163 0
+53C:\Users\mildr\Documents\forkify\src\js\controller.js134072127200867749 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\JE.js134059724611729309 0
 72C:\Users\mildr\Documents\forkify\node_modules\source-map-js\package.json134059724922982219 0
 102C:\Users\mildr\Documents\forkify\node_modules\@parcel\package-manager\test\fixtures\has-foo\subpackage134059724594844276 1
 60C:\Users\mildr\Documents\forkify\node_modules\node-addon-api134059724593037307 1
+54C:\Users\mildr\Documents\forkify\node_modules\chokidar134059724922953777 1
+71C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\index.js134059724588288850 0
+77C:\Users\mildr\Documents\forkify\node_modules\msgpackr\dist\index-no-eval.cjs134059724586791906 0
+85C:\Users\mildr\Documents\forkify\node_modules\@parcel\watcher\src\wasm\WasmBackend.cc134059724591867874 0
+65C:\Users\mildr\Documents\forkify\node_modules\parcel\package.json134059724589784114 0
+95C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\es6-string-includes.js134059724608010790 0
+101C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\css-container-query-units.js134059724600580700 0
+83C:\Users\mildr\Documents\forkify\node_modules\electron-to-chromium\full-versions.js134059724588433766 0
+86C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\_\_ts_metadata\package.json134059724607682362 0
+79C:\Users\mildr\Documents\forkify\node_modules\update-browserslist-db\index.d.ts134059724589837073 0
+77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\HN.js134059724610662994 0
+80C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lz4\lib\xxhash.h134059724599682446 0
+122C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\node_modules\node-gyp-build-optional-packages\build-test.js134059724586600079 0
+122C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\node_modules\.bin\node-gyp-build-optional-packages-test.cmd134059724620408981 0
+48C:\Users\mildr\Documents\forkify\src\js\model.js134072117395372677 0
 88C:\Users\mildr\Documents\forkify\node_modules\@parcel\core\lib\serializerCore.browser.js134059724600524099 0
 81C:\Users\mildr\Documents\forkify\node_modules\@parcel\runtime-js\src\JSRuntime.js134059724593930676 0
 88C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\bin\download-prebuilds.js134059724587729773 0
@@ -182,16 +197,6 @@
 120C:\Users\mildr\Documents\forkify\node_modules\@parcel\core\test\fixtures\config-extends-not-found\.parcelrc-node-modules134059724592120719 0
 52C:\Users\mildr\Documents\forkify\node_modules\braces134059724590469479 1
 51C:\Users\mildr\Documents\forkify\node_modules\chalk134059724589347610 1
-54C:\Users\mildr\Documents\forkify\node_modules\chokidar134059724922953777 1
-71C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\index.js134059724588288850 0
-77C:\Users\mildr\Documents\forkify\node_modules\msgpackr\dist\index-no-eval.cjs134059724586791906 0
-85C:\Users\mildr\Documents\forkify\node_modules\@parcel\watcher\src\wasm\WasmBackend.cc134059724591867874 0
-65C:\Users\mildr\Documents\forkify\node_modules\parcel\package.json134059724589784114 0
-95C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\es6-string-includes.js134059724608010790 0
-101C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\css-container-query-units.js134059724600580700 0
-83C:\Users\mildr\Documents\forkify\node_modules\electron-to-chromium\full-versions.js134059724588433766 0
-86C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\_\_ts_metadata\package.json134059724607682362 0
-79C:\Users\mildr\Documents\forkify\node_modules\update-browserslist-db\index.d.ts134059724589837073 0
 58C:\Users\mildr\Documents\forkify\node_modules\lightningcss134059724591181122 1
 78C:\Users\mildr\Documents\forkify\node_modules\type-fest\source\promisable.d.ts134059724593897557 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\CM.js134059724598878052 0
@@ -224,7 +229,7 @@
 87C:\Users\mildr\Documents\forkify\node_modules\lmdb\node_modules\node-addon-api\index.js134059724592244650 0
 57C:\Users\mildr\Documents\forkify\node_modules\detect-libc134059724588681403 1
 86C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\object-fit.js134059724613946957 0
-57C:\Users\mildr\Documents\forkify\dist\forkify.4a59a05f.js134067862036603343 0
+57C:\Users\mildr\Documents\forkify\dist\forkify.4a59a05f.js134072127201125669 0
 52C:\Users\mildr\Documents\forkify\node_modules\dotenv134059724590905661 1
 59C:\Users\mildr\Documents\forkify\node_modules\dotenv-expand134059724590124532 1
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\KW.js134059724612109587 0
@@ -566,7 +571,7 @@
 73C:\Users\mildr\Documents\forkify\node_modules\@parcel\transformer-postcss134059724590697005 1
 91C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\input-minlength.js134059724611315516 0
 84C:\Users\mildr\Documents\forkify\node_modules\type-fest\source\iterable-element.d.ts134059724592448819 0
-58C:\Users\mildr\Documents\forkify\dist\forkify.f7626f62.css134067862031712121 0
+58C:\Users\mildr\Documents\forkify\dist\forkify.f7626f62.css134072121660561282 0
 98C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\keyboardevent-charcode.js134059724611917566 0
 72C:\Users\mildr\Documents\forkify\node_modules\@parcel\core\lib\worker.js134059724602062807 0
 83C:\Users\mildr\Documents\forkify\node_modules\@parcel\utils\src\progress-message.js134059724596427466 0
@@ -740,12 +745,12 @@
 105C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lz4\lib\dll\example\fullbench-dll.vcxproj134059724601244488 0
 68C:\Users\mildr\Documents\forkify\node_modules\supports-color\license134059724584985063 0
 73C:\Users\mildr\Documents\forkify\node_modules\supports-color\package.json134059724587202080 0
-97C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lmdb\libraries\liblmdb\mdb_load.c134059724595593941 0
-104C:\Users\mildr\Documents\forkify\node_modules\@parcel\runtime-service-worker\lib\ServiceWorkerRuntime.js134059724585983660 0
-70C:\Users\mildr\Documents\forkify\node_modules\supports-color\readme.md134059724587945992 0
-65C:\Users\mildr\Documents\forkify\node_modules\msgpackr\pack.d.cts134059724590286107 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\GG.js134059724609930866 0
 72C:\Users\mildr\Documents\forkify\node_modules\react-refresh\package.json134059724590041911 0
+97C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lmdb\libraries\liblmdb\mdb_load.c134059724595593941 0
+104C:\Users\mildr\Documents\forkify\node_modules\@parcel\runtime-service-worker\lib\ServiceWorkerRuntime.js134059724585983660 0
+65C:\Users\mildr\Documents\forkify\node_modules\msgpackr\pack.d.cts134059724590286107 0
+70C:\Users\mildr\Documents\forkify\node_modules\supports-color\readme.md134059724587945992 0
 61C:\Users\mildr\Documents\forkify\node_modules\semver\internal134059724594803246 1
 88C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lz4\lib\liblz4-dll.rc.in134059724599682446 0
 92C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\wasm-multi-value.js134059724618535822 0
@@ -1014,7 +1019,7 @@
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\MK.js134059724613045525 0
 98C:\Users\mildr\Documents\forkify\node_modules\react-refresh\cjs\react-refresh-babel.development.js134059724586740730 0
 89C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\notifications.js134059724613863624 0
-56C:\Users\mildr\Documents\forkify\dist\icons.21bad73c.svg134067862036135012 0
+56C:\Users\mildr\Documents\forkify\dist\icons.21bad73c.svg134072121660561282 0
 87C:\Users\mildr\Documents\forkify\node_modules\@parcel\namer-default\src\DefaultNamer.js134059724587006865 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\GM.js134059724610192149 0
 93C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lmdb\libraries\liblmdb\lmdb.h134059724599062811 0
@@ -1200,10 +1205,6 @@
 65C:\Users\mildr\Documents\forkify\node_modules\immutable\README.md134059724923202962 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\KE.js134059724611897450 0
 79C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\ogv.js134059724614156502 0
-77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\HN.js134059724610662994 0
-80C:\Users\mildr\Documents\forkify\node_modules\lmdb\dependencies\lz4\lib\xxhash.h134059724599682446 0
-122C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\node_modules\node-gyp-build-optional-packages\build-test.js134059724586600079 0
-122C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\node_modules\.bin\node-gyp-build-optional-packages-test.cmd134059724620408981 0
 117C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\node_modules\node-gyp-build-optional-packages\index.js134059724587444227 0
 67C:\Users\mildr\Documents\forkify\node_modules\dotenv-expand\LICENSE134059724584985063 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\GF.js134059724609849426 0
@@ -1646,8 +1647,8 @@
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\MW.js134059724613532902 0
 78C:\Users\mildr\Documents\forkify\node_modules\electron-to-chromium\versions.js134059724589501880 0
 96C:\Users\mildr\Documents\forkify\node_modules\@parcel\reporter-dev-server\src\templates\404.html134059724586894210 0
-77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\GP.js134059724610254035 0
 71C:\Users\mildr\Documents\forkify\node_modules\dotenv-expand\lib\main.js134059724586645242 0
+77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\GP.js134059724610254035 0
 99C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\background-position-x-y.js134059724596017208 0
 80C:\Users\mildr\Documents\forkify\node_modules\electron-to-chromium\versions.json134059724591318787 0
 98C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\_\_assert_this_initialized\package.json134059724602428837 0
@@ -1859,7 +1860,7 @@
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\JP.js134059724611753077 0
 88C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\css3-cursors.js134059724606547997 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\KG.js134059724612019628 0
-62C:\Users\mildr\Documents\forkify\dist\forkify.f7626f62.css.map134067862033052392 0
+62C:\Users\mildr\Documents\forkify\dist\forkify.f7626f62.css.map134072121660948230 0
 79C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\esm\_create_class.js134059724599682446 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\KH.js134059724612039672 0
 92C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\webkit-user-drag.js134059724619032133 0
@@ -2142,7 +2143,7 @@
 82C:\Users\mildr\Documents\forkify\node_modules\@parcel\feature-flags\lib\types.d.ts134059724590001266 0
 82C:\Users\mildr\Documents\forkify\node_modules\@swc\helpers\esm\_new_arrow_check.js134059724600580700 0
 99C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\font-variant-alternates.js134059724608814802 0
-55C:\Users\mildr\Documents\forkify\dist\logo.726d37a8.png134067862031723610 0
+55C:\Users\mildr\Documents\forkify\dist\logo.726d37a8.png134072121660610970 0
 85C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\css-masks.js134059724602428837 0
 69C:\Users\mildr\Documents\forkify\node_modules\@parcel\transformer-svg134059724587638803 1
 94C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\css-matches-pseudo.js134059724602454004 0
@@ -3651,5 +3652,6 @@
 57C:\Users\mildr\Documents\forkify\node_modules\.bin\semver134059724620388930 0
 57C:\Users\mildr\Documents\forkify\dist\forkify.3464ddca.js134059728183031881 0
 61C:\Users\mildr\Documents\forkify\dist\forkify.3464ddca.js.map134059728183132512 0
-61C:\Users\mildr\Documents\forkify\dist\forkify.4a59a05f.js.map134067862037599772 0
-48C:\Users\mildr\Documents\forkify\dist\index.html134067862031712121 0
+61C:\Users\mildr\Documents\forkify\dist\forkify.4a59a05f.js.map134072127201150841 0
+56C:\Users\mildr\Documents\forkify\dist\icons.7bd9dd61.svg134072121660561282 0
+48C:\Users\mildr\Documents\forkify\dist\index.html134072121660436780 0

@@ -714,6 +714,11 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"7dWZ8":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _modelJs = require("./model.js");
+var _iconsSvg = require("../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+//Importa todas las funciones como model.
 const recipeContainer = document.querySelector('.recipe');
 const timeout = function(s) {
     return new Promise(function(_, reject) {
@@ -722,11 +727,13 @@ const timeout = function(s) {
         }, s * 1000);
     });
 };
-///////////////////////////////////////
 async function showRecipe() {
     try {
+        // ponerlo despues del try y pasarle el parametro recipeContainer
+        // llamar la funcion renderSpinner en el punto 23 inciso D
+        renderSpinner(recipeContainer);
         // URL Correcta
-        const resp = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886');
+        const resp = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`); // inciso 4D pasar variable.
         // URL INcorrecta.
         //  const resp = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886zzz');
         const data = await resp.json(); // aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
@@ -757,14 +764,14 @@ async function showRecipe() {
         <div class="recipe__details">
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="src/img/icons.svg#icon-clock"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--minutes">${recipe.cookTime}</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="src/img/icons.svg#icon-users"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-users"></use>
             </svg>
             <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
             <span class="recipe__info-text">servings</span>
@@ -772,12 +779,12 @@ async function showRecipe() {
             <div class="recipe__info-buttons">
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="src/img/icons.svg#icon-minus-circle"></use>
+                  <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
                 </svg>
               </button>
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="src/img/icons.svg#icon-plus-circle"></use>
+                  <use href="${(0, _iconsSvgDefault.default)}#icon-plus-circle"></use>
                 </svg>
               </button>
             </div>
@@ -785,12 +792,12 @@ async function showRecipe() {
 
           <div class="recipe__user-generated">
             <svg>
-              <use href="src/img/icons.svg#icon-user"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
             </svg>
           </div>
           <button class="btn--round">
             <svg class="">
-              <use href="src/img/icons.svg#icon-bookmark-fill"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
             </svg>
           </button>
         </div>
@@ -802,7 +809,7 @@ async function showRecipe() {
             return `
               <li class="recipe__ingredient">
               <svg class="recipe__icon">
-              <use href="src/img/icons.svg#icon-check"></use>
+              <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
               </svg>
               <div class="recipe__quantity">${ing.quantity}</div>
               <div class="recipe__description">
@@ -831,19 +838,118 @@ async function showRecipe() {
           >
             <span>Directions</span>
             <svg class="search__icon">
-              <use href="src/img/icons.svg#icon-arrow-right"></use>
+              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
             </svg>
           </a>
         </div>
        `;
         recipeContainer.innerHTML = '';
         recipeContainer.insertAdjacentHTML('afterbegin', markup);
+        // punto 4 inciso A, Declarar una variable id y asignar el meotdo window.location.hash
+        let id = window.location.hash.slice(1); // se agrego slice(1) inciso 4C
+        console.log("Imprimir id:", id);
+        if (!id) return; // punto 6.
     } catch (err) {
         alert('Error: ' + err); // en caso de error, enviar mensaje en alert
     }
 }
-showRecipe(); // Invocar la funcion showRecipe.
+// Borrar punto 2 -> showRecipe();// Invocar la funcion showRecipe.
+// Crear una funcion que se llame renderSpinner.
+function renderSpinner(parentEI) {
+    console.log("Entro en la funcion renderSpinner");
+    let markup = `<div class="spinner">
+          <svg>
+            <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use> 
+          </svg>
+        </div>`; // importante cambiar el url src/img/icons.svg
+    parentEI.innerHTML = ''; // punto 23 c
+    parentEI.insertAdjacentHTML('afterbegin', markup); // igual a la linea 133, punto 23 inciso b
+}
+// Avance 2
+// crear el evento con addEventListener
+// aqui recibe los parametros hashchange y showRecipe
+// punto 1.
+// window.addEventListener("hashchange", showRecipe); 
+// // punto 5 agregar parametro Load y showRecipe
+// window.addEventListener("load",showRecipe);
+// crear arreglo, para OPTIMIZAR los elementos‘haschange’,’load’ 
+const eventos = [
+    'hashchange',
+    'load'
+];
+// aplicar el metodo foreach, recibe el parámetro una función flecha que,recibe el evento (ev)
+eventos.forEach((ev)=>window.addEventListener(ev, showRecipe));
 
-},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {})
+},{"../img/icons.svg":"d6UCS","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./model.js":"3QBkH"}],"d6UCS":[function() {},{}],"jnFvT":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"3QBkH":[function(require,module,exports,__globalThis) {
+// Crear objeto state que, tendrá dentro de él un objeto recipe vacío.
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state);
+//Crea la función asíncrona loadRecipe y pasa la variable id.
+parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+const state = {
+    recipe: {}
+};
+async function loadRecipe(id) {
+    try {
+        // la declaracion de res y data
+        const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
+        const data = await res.json();
+        // La validación del estado de res
+        // const { recipe } = data.data;
+        //Declara como const el objeto recipe
+        const recipe = data.data.recipe;
+        // Desestructuración de recipe
+        state.recipe = {
+            id: recipe.id,
+            title: recipe.title,
+            publisher: recipe.publisher,
+            sourceUrl: recipe.source_url,
+            image: recipe.image_url,
+            servings: recipe.servings,
+            cookTime: recipe.cooking_time,
+            ingredients: recipe.ingredients
+        };
+        // La impresion de recipe
+        // y  también registra a recipe como objeto de state.recipe
+        console.log('Receta despues de Desestructuracion:', state.recipe);
+    } catch (err) {
+        // enviar la alerta de error.
+        console.error('Error al cargar la receta:', err);
+        throw err;
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {})
 
 //# sourceMappingURL=forkify.4a59a05f.js.map
