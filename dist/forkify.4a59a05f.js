@@ -177,7 +177,7 @@
 
   // Only insert newRequire.load when it is actually used.
   // The code in this file is linted against ES5, so dynamic import is not allowed.
-  // INSERT_LOAD_HERE
+  function $parcel$resolve(url) {  url = importMap[url] || url;  return import.meta.resolve(distDir + url);}newRequire.resolve = $parcel$resolve;
 
   Object.defineProperty(newRequire, 'root', {
     get: function () {
@@ -715,76 +715,106 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"7dWZ8":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-var _modelJs = require("./model.js");
-var _iconsSvg = require("../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+var _modelJs = require("../js/model.js");
+var _recipeViewJs = require("./views/RecipeView.js"); //inciso C i: Importa recipeView desde ./view/recipeview.js
+var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
+var _searchViewsJs = require("./views/searchViews.js");
+var _searchViewsJsDefault = parcelHelpers.interopDefault(_searchViewsJs);
 //Importa todas las funciones como model.
+console.log(" valor:", (0, _recipeViewJsDefault.default));
 const recipeContainer = document.querySelector('.recipe');
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
-async function showRecipe() {
+///////////////////////////////////////
+async function controlRecipes() {
     try {
-        // ponerlo despues del try y pasarle el parametro recipeContainer
-        // llamar la funcion renderSpinner en el punto 23 inciso D
-        renderSpinner(recipeContainer);
-        // URL Correcta
-        const resp = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`); // inciso 4D pasar variable.
-        // URL INcorrecta.
-        //  const resp = await fetch('https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886zzz');
-        const data = await resp.json(); // aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
-        console.log('Respuesta:', resp); // enviar la consol la constante resp.
-        console.log('Data:', data); // enviar a la consola la constante data.
-        let recipe = data.data.recipe; // Para visualizar los datos que se necesitan desplegar en la pantalla. 
-        console.log('Receta:', recipe);
-        //  // Desestructuración
-        recipe = {
-            id: recipe.id,
-            title: recipe.title,
-            publisher: recipe.publisher,
-            sourceUrl: recipe.source_url,
-            image: recipe.image_url,
-            servings: recipe.servings,
-            cookTime: recipe.cooking_time,
-            ingredients: recipe.ingredients
-        };
-        console.log('Receta despues de Desestructuracion:', recipe);
-        const markup = ` 
+        const id = window.location.hash.slice(1);
+        console.log("\uD83D\uDD0D ID recibido:", id);
+        if (!id) return;
+        console.log("llamar render");
+        (0, _recipeViewJsDefault.default).renderSpinner(); // 23d. Mostrar el spinner mientras carga
+        console.log("Salir render");
+        await _modelJs.loadRecipe(id);
+        (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+    } catch (err) {
+        (0, _recipeViewJsDefault.default).renderError(err);
+        throw err;
+    }
+}
+const controlSearchResults = async function() {
+    try {
+        const query = (0, _searchViewsJsDefault.default).getQuery();
+        if (!query) {
+            console.log("no se ha ingresado un termino de busqueda.");
+            return;
+        }
+        await _modelJs.loadSearchResults(query);
+        console.log("controlSearchResults=", _modelJs.state.search.results);
+    } catch (err) {
+        console.log("error:", err);
+    }
+};
+//controlRecipes();// Invocar la funcion showRecipe.
+function init() {
+    (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
+    (0, _searchViewsJsDefault.default).addHandlerSearch(controlSearchResults);
+}
+init();
+
+},{"./views/RecipeView.js":"dfIpa","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","../js/model.js":"3QBkH","./views/searchViews.js":"Es71q"}],"dfIpa":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _fractionJs = require("fraction.js");
+var _fractionJsDefault = parcelHelpers.interopDefault(_fractionJs);
+const icons = new URL(require("a0b82650a605f976")).href; // Parcel v2
+class RecipeView {
+    _errorMessage = 'We could not find that recipe. Please try another one!';
+    #parentElement = document.querySelector('.recipe');
+    #data;
+    // 🖼️ Renderiza la receta en el DOM
+    render(data) {
+        console.log("entra valor", this.#parentElement);
+        this.#data = data; // Guarda los datos recibidos
+        this.#clear(); // Limpia el contenido anterior
+        const markup = this.#generateMarkup(); // Genera el nuevo HTML
+        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
+    }
+    // 🧹 Limpia el contenido del contenedor principal
+    #clear() {
+        this.#parentElement.innerHTML = '';
+    }
+    #generateMarkup() {
+        console.log("entra a generateMarkup");
+        return ` 
         <figure class="recipe__fig">
-          <img src="${recipe.image}" alt="Tomato" class="recipe__img" />
+          <img src="${this.#data.image}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
-            <span>${recipe.title}</span>
+            <span>${this.#data.title}</span>
           </h1>
         </figure>
 
         <div class="recipe__details">
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-clock"></use>
+              <use href="${icons}#icon-clock"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${recipe.cookTime}</span>
+            <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-users"></use>
+              <use href="${icons}#icon-users"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--people">${recipe.servings}</span>
+            <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="${(0, _iconsSvgDefault.default)}#icon-minus-circle"></use>
+                  <use href="${icons}#icon-minus-circle"></use>
                 </svg>
               </button>
               <button class="btn--tiny btn--increase-servings">
                 <svg>
-                  <use href="${(0, _iconsSvgDefault.default)}#icon-plus-circle"></use>
+                  <use href="${icons}#icon-plus-circle"></use>
                 </svg>
               </button>
             </div>
@@ -792,12 +822,12 @@ async function showRecipe() {
 
           <div class="recipe__user-generated">
             <svg>
-              <use href="${(0, _iconsSvgDefault.default)}#icon-user"></use>
+              <use href="${icons}#icon-user"></use>
             </svg>
           </div>
           <button class="btn--round">
             <svg class="">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-bookmark-fill"></use>
+              <use href="${icons}#icon-bookmark-fill"></use>
             </svg>
           </button>
         </div>
@@ -805,13 +835,13 @@ async function showRecipe() {
         <div class="recipe__ingredients">
           <h2 class="heading--2">Recipe ingredients</h2>
           <ul class="recipe__ingredient-list">
-          ${recipe.ingredients.map((ing)=>{
+          ${this.#data.ingredients.map((ing)=>{
             return `
               <li class="recipe__ingredient">
               <svg class="recipe__icon">
-              <use href="${0, _iconsSvgDefault.default}#icon-check"></use>
+              <use href="${icons}#icon-check"></use>
               </svg>
-              <div class="recipe__quantity">${ing.quantity}</div>
+              <div class="recipe__quantity">${ing.quantity ? new (0, _fractionJsDefault.default)(ing.quantity).toFraction(true) : ''}</div>
               <div class="recipe__description">
               <span class="recipe__unit">${ing.unit}</span>
               ${ing.description}
@@ -828,59 +858,69 @@ async function showRecipe() {
           <h2 class="heading--2">How to cook it</h2>
           <p class="recipe__directions-text">
             This recipe was carefully designed and tested by
-            <span class="recipe__publisher">${recipe.publisher}</span>. Please check out
+            <span class="recipe__publisher">${this.#data.publisher}</span>. Please check out
             directions at their website.
           </p>
           <a
             class="btn--small recipe__btn"
-            href="${recipe.sourceUrl}"
+            href="${this.#data.sourceUrl}"
             target="_blank"
           >
             <span>Directions</span>
             <svg class="search__icon">
-              <use href="${(0, _iconsSvgDefault.default)}#icon-arrow-right"></use>
+              <use href="${icons}#icon-arrow-right"></use>
             </svg>
           </a>
         </div>
        `;
-        recipeContainer.innerHTML = '';
-        recipeContainer.insertAdjacentHTML('afterbegin', markup);
-        // punto 4 inciso A, Declarar una variable id y asignar el meotdo window.location.hash
-        let id = window.location.hash.slice(1); // se agrego slice(1) inciso 4C
-        console.log("Imprimir id:", id);
-        if (!id) return; // punto 6.
-    } catch (err) {
-        alert('Error: ' + err); // en caso de error, enviar mensaje en alert
+    }
+    // Función para renderizar el spinner Av1_23
+    renderSpinner() {
+        console.log("iniciando render");
+        const markup = `
+    <div class="spinner">
+      <svg>
+        <use href="${icons}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+        this.#parentElement.innerHTML = ''; // 23c. Limpiar el contenido previo
+        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // 23b. Insertar el spinner
+    }
+    addHandlerRender(handler) {
+        [
+            'hashchange',
+            'load'
+        ].forEach((ev)=>window.addEventListener(ev, handler));
+    }
+    renderError(message = this._errorMessage) {
+        const markup = `<div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-alert-triangle"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>`;
+        this.#clear(); // Limpia el contenido anterior
+        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
+    }
+    renderMessage(message = this._message) {
+        const markup = `<div class="error">
+            <div>
+              <svg>
+                <use href="${icons}#icon-smile"></use>
+              </svg>
+            </div>
+            <p>${message}</p>
+          </div>`;
+        this.#clear(); // Limpia el contenido anterior
+        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
     }
 }
-// Borrar punto 2 -> showRecipe();// Invocar la funcion showRecipe.
-// Crear una funcion que se llame renderSpinner.
-function renderSpinner(parentEI) {
-    console.log("Entro en la funcion renderSpinner");
-    let markup = `<div class="spinner">
-          <svg>
-            <use href="${(0, _iconsSvgDefault.default)}#icon-loader"></use> 
-          </svg>
-        </div>`; // importante cambiar el url src/img/icons.svg
-    parentEI.innerHTML = ''; // punto 23 c
-    parentEI.insertAdjacentHTML('afterbegin', markup); // igual a la linea 133, punto 23 inciso b
-}
-// Avance 2
-// crear el evento con addEventListener
-// aqui recibe los parametros hashchange y showRecipe
-// punto 1.
-// window.addEventListener("hashchange", showRecipe); 
-// // punto 5 agregar parametro Load y showRecipe
-// window.addEventListener("load",showRecipe);
-// crear arreglo, para OPTIMIZAR los elementos‘haschange’,’load’ 
-const eventos = [
-    'hashchange',
-    'load'
-];
-// aplicar el metodo foreach, recibe el parámetro una función flecha que,recibe el evento (ev)
-eventos.forEach((ev)=>window.addEventListener(ev, showRecipe));
+exports.default = new RecipeView();
 
-},{"../img/icons.svg":"d6UCS","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./model.js":"3QBkH"}],"d6UCS":[function() {},{}],"jnFvT":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","a0b82650a605f976":"aob6l","fraction.js":"md6n5"}],"jnFvT":[function(require,module,exports,__globalThis) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -910,26 +950,420 @@ exports.export = function(dest, destName, get) {
     });
 };
 
+},{}],"aob6l":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("icons.7bd9dd61.svg") + "?" + Date.now();
+
+},{}],"md6n5":[function(require,module,exports,__globalThis) {
+/*
+Fraction.js v5.3.4 8/22/2025
+https://raw.org/article/rational-numbers-in-javascript/
+
+Copyright (c) 2025, Robert Eisele (https://raw.org/)
+Licensed under the MIT license.
+*/ 'use strict';
+(function(F) {
+    function D() {
+        return Error("Parameters must be integer");
+    }
+    function x() {
+        return Error("Invalid argument");
+    }
+    function C() {
+        return Error("Division by Zero");
+    }
+    function q(a, b) {
+        var d = g, c = h;
+        let f = h;
+        if (void 0 !== a && null !== a) {
+            if (void 0 !== b) {
+                if ("bigint" === typeof a) d = a;
+                else {
+                    if (isNaN(a)) throw x();
+                    if (0 !== a % 1) throw D();
+                    d = BigInt(a);
+                }
+                if ("bigint" === typeof b) c = b;
+                else {
+                    if (isNaN(b)) throw x();
+                    if (0 !== b % 1) throw D();
+                    c = BigInt(b);
+                }
+                f = d * c;
+            } else if ("object" === typeof a) {
+                if ("d" in a && "n" in a) d = BigInt(a.n), c = BigInt(a.d), "s" in a && (d *= BigInt(a.s));
+                else if (0 in a) d = BigInt(a[0]), 1 in a && (c = BigInt(a[1]));
+                else if ("bigint" === typeof a) d = a;
+                else throw x();
+                f = d * c;
+            } else if ("number" === typeof a) {
+                if (isNaN(a)) throw x();
+                0 > a && (f = -h, a = -a);
+                if (0 === a % 1) d = BigInt(a);
+                else {
+                    b = 1;
+                    var k = 0, l = 1, m = 1;
+                    let r = 1;
+                    1 <= a && (b = 10 ** Math.floor(1 + Math.log10(a)), a /= b);
+                    for(; 1E7 >= l && 1E7 >= r;)if (c = (k + m) / (l + r), a === c) {
+                        1E7 >= l + r ? (d = k + m, c = l + r) : r > l ? (d = m, c = r) : (d = k, c = l);
+                        break;
+                    } else a > c ? (k += m, l += r) : (m += k, r += l), 1E7 < l ? (d = m, c = r) : (d = k, c = l);
+                    d = BigInt(d) * BigInt(b);
+                    c = BigInt(c);
+                }
+            } else if ("string" === typeof a) {
+                c = 0;
+                k = b = d = g;
+                l = m = h;
+                a = a.replace(/_/g, "").match(/\d+|./g);
+                if (null === a) throw x();
+                "-" === a[c] ? (f = -h, c++) : "+" === a[c] && c++;
+                if (a.length === c + 1) b = w(a[c++], f);
+                else if ("." === a[c + 1] || "." === a[c]) {
+                    "." !== a[c] && (d = w(a[c++], f));
+                    c++;
+                    if (c + 1 === a.length || "(" === a[c + 1] && ")" === a[c + 3] || "'" === a[c + 1] && "'" === a[c + 3]) b = w(a[c], f), m = t ** BigInt(a[c].length), c++;
+                    if ("(" === a[c] && ")" === a[c + 2] || "'" === a[c] && "'" === a[c + 2]) k = w(a[c + 1], f), l = t ** BigInt(a[c + 1].length) - h, c += 3;
+                } else "/" === a[c + 1] || ":" === a[c + 1] ? (b = w(a[c], f), m = w(a[c + 2], h), c += 3) : "/" === a[c + 3] && " " === a[c + 1] && (d = w(a[c], f), b = w(a[c + 2], f), m = w(a[c + 4], h), c += 5);
+                if (a.length <= c) c = m * l, f = d = k + c * d + l * b;
+                else throw x();
+            } else if ("bigint" === typeof a) f = d = a, c = h;
+            else throw x();
+        }
+        if (c === g) throw C();
+        e.s = f < g ? -h : h;
+        e.n = d < g ? -d : d;
+        e.d = c < g ? -c : c;
+    }
+    function w(a, b) {
+        try {
+            a = BigInt(a);
+        } catch (d) {
+            throw x();
+        }
+        return a * b;
+    }
+    function u(a) {
+        return "bigint" === typeof a ? a : Math.floor(a);
+    }
+    function n(a, b) {
+        if (b === g) throw C();
+        const d = Object.create(v.prototype);
+        d.s = a < g ? -h : h;
+        a = a < g ? -a : a;
+        const c = y(a, b);
+        d.n = a / c;
+        d.d = b / c;
+        return d;
+    }
+    function A(a) {
+        const b = Object.create(null);
+        if (a <= h) return b[a] = h, b;
+        for(; a % p === g;)b[p] = (b[p] || g) + h, a /= p;
+        for(; a % B === g;)b[B] = (b[B] || g) + h, a /= B;
+        for(; a % z === g;)b[z] = (b[z] || g) + h, a /= z;
+        for(let d = 0, c = p + z; c * c <= a;){
+            for(; a % c === g;)b[c] = (b[c] || g) + h, a /= c;
+            c += G[d];
+            d = d + 1 & 7;
+        }
+        a > h && (b[a] = (b[a] || g) + h);
+        return b;
+    }
+    function y(a, b) {
+        if (!a) return b;
+        if (!b) return a;
+        for(;;){
+            a %= b;
+            if (!a) return b;
+            b %= a;
+            if (!b) return a;
+        }
+    }
+    function v(a, b) {
+        q(a, b);
+        if (this instanceof v) a = y(e.d, e.n), this.s = e.s, this.n = e.n / a, this.d = e.d / a;
+        else return n(e.s * e.n, e.d);
+    }
+    "undefined" === typeof BigInt && (BigInt = function(a) {
+        if (isNaN(a)) throw Error("");
+        return a;
+    });
+    const g = BigInt(0), h = BigInt(1), p = BigInt(2), B = BigInt(3), z = BigInt(5), t = BigInt(10), e = {
+        s: h,
+        n: g,
+        d: h
+    }, G = [
+        p * p,
+        p,
+        p * p,
+        p,
+        p * p,
+        p * B,
+        p,
+        p * B
+    ];
+    v.prototype = {
+        s: h,
+        n: g,
+        d: h,
+        abs: function() {
+            return n(this.n, this.d);
+        },
+        neg: function() {
+            return n(-this.s * this.n, this.d);
+        },
+        add: function(a, b) {
+            q(a, b);
+            return n(this.s * this.n * e.d + e.s * this.d * e.n, this.d * e.d);
+        },
+        sub: function(a, b) {
+            q(a, b);
+            return n(this.s * this.n * e.d - e.s * this.d * e.n, this.d * e.d);
+        },
+        mul: function(a, b) {
+            q(a, b);
+            return n(this.s * e.s * this.n * e.n, this.d * e.d);
+        },
+        div: function(a, b) {
+            q(a, b);
+            return n(this.s * e.s * this.n * e.d, this.d * e.n);
+        },
+        clone: function() {
+            return n(this.s * this.n, this.d);
+        },
+        mod: function(a, b) {
+            if (void 0 === a) return n(this.s * this.n % this.d, h);
+            q(a, b);
+            if (g === e.n * this.d) throw C();
+            return n(this.s * e.d * this.n % (e.n * this.d), e.d * this.d);
+        },
+        gcd: function(a, b) {
+            q(a, b);
+            return n(y(e.n, this.n) * y(e.d, this.d), e.d * this.d);
+        },
+        lcm: function(a, b) {
+            q(a, b);
+            return e.n === g && this.n === g ? n(g, h) : n(e.n * this.n, y(e.n, this.n) * y(e.d, this.d));
+        },
+        inverse: function() {
+            return n(this.s * this.d, this.n);
+        },
+        pow: function(a, b) {
+            q(a, b);
+            if (e.d === h) return e.s < g ? n((this.s * this.d) ** e.n, this.n ** e.n) : n((this.s * this.n) ** e.n, this.d ** e.n);
+            if (this.s < g) return null;
+            a = A(this.n);
+            b = A(this.d);
+            let d = h, c = h;
+            for(let f in a)if ("1" !== f) {
+                if ("0" === f) {
+                    d = g;
+                    break;
+                }
+                a[f] *= e.n;
+                if (a[f] % e.d === g) a[f] /= e.d;
+                else return null;
+                d *= BigInt(f) ** a[f];
+            }
+            for(let f in b)if ("1" !== f) {
+                b[f] *= e.n;
+                if (b[f] % e.d === g) b[f] /= e.d;
+                else return null;
+                c *= BigInt(f) ** b[f];
+            }
+            return e.s < g ? n(c, d) : n(d, c);
+        },
+        log: function(a, b) {
+            q(a, b);
+            if (this.s <= g || e.s <= g) return null;
+            var d = Object.create(null);
+            a = A(e.n);
+            const c = A(e.d);
+            b = A(this.n);
+            const f = A(this.d);
+            for(var k in c)a[k] = (a[k] || g) - c[k];
+            for(var l in f)b[l] = (b[l] || g) - f[l];
+            for(var m in a)"1" !== m && (d[m] = !0);
+            for(var r in b)"1" !== r && (d[r] = !0);
+            l = k = null;
+            for(const E in d)if (m = a[E] || g, d = b[E] || g, m === g) {
+                if (d !== g) return null;
+            } else if (r = y(d, m), d /= r, m /= r, null === k && null === l) k = d, l = m;
+            else if (d * l !== k * m) return null;
+            return null !== k && null !== l ? n(k, l) : null;
+        },
+        equals: function(a, b) {
+            q(a, b);
+            return this.s * this.n * e.d === e.s * e.n * this.d;
+        },
+        lt: function(a, b) {
+            q(a, b);
+            return this.s * this.n * e.d < e.s * e.n * this.d;
+        },
+        lte: function(a, b) {
+            q(a, b);
+            return this.s * this.n * e.d <= e.s * e.n * this.d;
+        },
+        gt: function(a, b) {
+            q(a, b);
+            return this.s * this.n * e.d > e.s * e.n * this.d;
+        },
+        gte: function(a, b) {
+            q(a, b);
+            return this.s * this.n * e.d >= e.s * e.n * this.d;
+        },
+        compare: function(a, b) {
+            q(a, b);
+            a = this.s * this.n * e.d - e.s * e.n * this.d;
+            return (g < a) - (a < g);
+        },
+        ceil: function(a) {
+            a = t ** BigInt(a || 0);
+            return n(u(this.s * a * this.n / this.d) + (a * this.n % this.d > g && this.s >= g ? h : g), a);
+        },
+        floor: function(a) {
+            a = t ** BigInt(a || 0);
+            return n(u(this.s * a * this.n / this.d) - (a * this.n % this.d > g && this.s < g ? h : g), a);
+        },
+        round: function(a) {
+            a = t ** BigInt(a || 0);
+            return n(u(this.s * a * this.n / this.d) + this.s * ((this.s >= g ? h : g) + a * this.n % this.d * p > this.d ? h : g), a);
+        },
+        roundTo: function(a, b) {
+            q(a, b);
+            var d = this.n * e.d;
+            a = this.d * e.n;
+            b = d % a;
+            d = u(d / a);
+            b + b >= a && d++;
+            return n(this.s * d * e.n, e.d);
+        },
+        divisible: function(a, b) {
+            q(a, b);
+            return e.n === g ? !1 : this.n * e.d % (e.n * this.d) === g;
+        },
+        valueOf: function() {
+            return Number(this.s * this.n) / Number(this.d);
+        },
+        toString: function(a = 15) {
+            let b = this.n, d = this.d;
+            var c;
+            a: {
+                for(c = d; c % p === g; c /= p);
+                for(; c % z === g; c /= z);
+                if (c === h) c = g;
+                else {
+                    for(var f = t % c, k = 1; f !== h; k++)if (f = f * t % c, 2E3 < k) {
+                        c = g;
+                        break a;
+                    }
+                    c = BigInt(k);
+                }
+            }
+            a: {
+                f = h;
+                k = t;
+                var l = c;
+                let m = h;
+                for(; l > g; k = k * k % d, l >>= h)l & h && (m = m * k % d);
+                k = m;
+                for(l = 0; 300 > l; l++){
+                    if (f === k) {
+                        f = BigInt(l);
+                        break a;
+                    }
+                    f = f * t % d;
+                    k = k * t % d;
+                }
+                f = 0;
+            }
+            k = f;
+            f = this.s < g ? "-" : "";
+            f += u(b / d);
+            (b = b % d * t) && (f += ".");
+            if (c) {
+                for(a = k; a--;)f += u(b / d), b %= d, b *= t;
+                f += "(";
+                for(a = c; a--;)f += u(b / d), b %= d, b *= t;
+                f += ")";
+            } else for(; b && a--;)f += u(b / d), b %= d, b *= t;
+            return f;
+        },
+        toFraction: function(a = !1) {
+            let b = this.n, d = this.d, c = this.s < g ? "-" : "";
+            if (d === h) c += b;
+            else {
+                const f = u(b / d);
+                a && f > g && (c += f, c += " ", b %= d);
+                c = c + b + "/" + d;
+            }
+            return c;
+        },
+        toLatex: function(a = !1) {
+            let b = this.n, d = this.d, c = this.s < g ? "-" : "";
+            if (d === h) c += b;
+            else {
+                const f = u(b / d);
+                a && f > g && (c += f, b %= d);
+                c = c + "\\frac{" + b + "}{" + d;
+                c += "}";
+            }
+            return c;
+        },
+        toContinued: function() {
+            let a = this.n, b = this.d;
+            const d = [];
+            for(; b;){
+                d.push(u(a / b));
+                const c = a % b;
+                a = b;
+                b = c;
+            }
+            return d;
+        },
+        simplify: function(a = .001) {
+            a = BigInt(Math.ceil(1 / a));
+            const b = this.abs(), d = b.toContinued();
+            for(let f = 1; f < d.length; f++){
+                let k = n(d[f - 1], h);
+                for(var c = f - 2; 0 <= c; c--)k = k.inverse().add(d[c]);
+                c = k.sub(b);
+                if (c.n * a < c.d) return k.mul(this.s);
+            }
+            return this;
+        }
+    };
+    "function" === typeof define && define.amd ? define([], function() {
+        return v;
+    }) : (Object.defineProperty(v, "__esModule", {
+        value: !0
+    }), v["default"] = v, v.Fraction = v, module.exports = v);
+})(this);
+
 },{}],"3QBkH":[function(require,module,exports,__globalThis) {
-// Crear objeto state que, tendrá dentro de él un objeto recipe vacío.
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
 //Crea la función asíncrona loadRecipe y pasa la variable id.
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
+var _configJs = require("./config.js");
+var _helpersJs = require("./helpers.js");
 const state = {
-    recipe: {}
+    recipe: {},
+    search: {
+        query: '',
+        results: []
+    },
+    bookmarks: []
 };
 async function loadRecipe(id) {
     try {
-        // la declaracion de res y data
-        const res = await fetch(`https://forkify-api.herokuapp.com/api/v2/recipes/${id}`);
-        const data = await res.json();
-        // La validación del estado de res
-        // const { recipe } = data.data;
-        //Declara como const el objeto recipe
-        const recipe = data.data.recipe;
-        // Desestructuración de recipe
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`);
+        const { recipe } = data.data; // Para visualizar los datos que se necesitan desplegar en la pantalla. 
+        console.log('Receta:', recipe);
+        //  // Desestructuración
         state.recipe = {
             id: recipe.id,
             title: recipe.title,
@@ -940,16 +1374,96 @@ async function loadRecipe(id) {
             cookTime: recipe.cooking_time,
             ingredients: recipe.ingredients
         };
-        // La impresion de recipe
-        // y  también registra a recipe como objeto de state.recipe
         console.log('Receta despues de Desestructuracion:', state.recipe);
     } catch (err) {
-        // enviar la alerta de error.
-        console.error('Error al cargar la receta:', err);
+        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
         throw err;
     }
 }
+const loadSearchResults = async function name(query) {
+    try {
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}/?search=${query}`);
+        // // 🧠 Transformamos y almacenamos los resultados en el estado global
+        state.search.query = query;
+        state.search.results = data.data.recipes.map((rec)=>{
+            return {
+                id: rec.id,
+                title: rec.title,
+                publisher: rec.publisher,
+                image: rec.image_url
+            };
+        });
+    } catch (err) {
+        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+    }
+};
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {})
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./config.js":"2hPh4","./helpers.js":"7nL9P"}],"2hPh4":[function(require,module,exports,__globalThis) {
+// Declara y exporta la constante API_URL y asígnale la URL de la API que se está consumiendo
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_URL", ()=>API_URL);
+parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC);
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
+const TIMEOUT_SEC = 10;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7nL9P":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getJSON", ()=>getJSON);
+const TIMEOUT_SEC = 5;
+const getJSON = async function(url) {
+    try {
+        console.log("URL", url);
+        const fetchPro = fetch(url);
+        console.log("fetchPro", fetchPro);
+        const res = await Promise.race([
+            fetchPro,
+            timeout(TIMEOUT_SEC)
+        ]);
+        console.log('Respuesta:', res); // enviar la consol la constante resp.
+        const data = await res.json(); // aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
+        console.log('Data:', data); // enviar a la consola la constante data.
+        // ❌ Valida si la respuesta fue exitosa
+        if (!res.ok) {
+            const message = data?.message || 'Unknown error';
+            throw new Error(`${message} (${res.status})`);
+        }
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
+const timeout = function(s) {
+    return new Promise(function(_, reject) {
+        setTimeout(function() {
+            reject(new Error(`Request took too long! Timeout after ${s} second`));
+        }, s * 1000);
+    });
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"Es71q":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SearchView {
+    #parentEl = document.querySelector('.search');
+    getQuery() {
+        const query = this.#parentEl.querySelector('.search__field').value;
+        this.#clearInput(); // Limpia el campo después de obtener el valor
+        return query;
+    }
+    #clearInput() {
+        this.#parentEl.querySelector('.search__field').value = '';
+    }
+    addHandlerSearch(handler) {
+        this.#parentEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handler();
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=forkify.4a59a05f.js.map
