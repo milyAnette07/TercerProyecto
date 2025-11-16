@@ -720,22 +720,24 @@ var _recipeViewJs = require("./views/RecipeView.js"); //inciso C i: Importa reci
 var _recipeViewJsDefault = parcelHelpers.interopDefault(_recipeViewJs);
 var _searchViewsJs = require("./views/searchViews.js");
 var _searchViewsJsDefault = parcelHelpers.interopDefault(_searchViewsJs);
+var _resultsViewJs = require("./views/ResultsView.js"); // Importa la clase ResultsView
+var _resultsViewJsDefault = parcelHelpers.interopDefault(_resultsViewJs);
 //Importa todas las funciones como model.
-console.log(" valor:", (0, _recipeViewJsDefault.default));
 const recipeContainer = document.querySelector('.recipe');
-///////////////////////////////////////
+console.log(" valor:", recipeContainer);
 async function controlRecipes() {
     try {
         const id = window.location.hash.slice(1);
-        console.log("\uD83D\uDD0D ID recibido:", id);
+        console.log(' ID recibido:', id);
         if (!id) return;
         console.log("llamar render");
-        (0, _recipeViewJsDefault.default).renderSpinner(); // 23d. Mostrar el spinner mientras carga
+        (0, _resultsViewJsDefault.default).renderSpinner(); // 23d. Mostrar el spinner mientras carga
         console.log("Salir render");
         await _modelJs.loadRecipe(id);
-        (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+        (0, _resultsViewJsDefault.default).render(_modelJs.state.search.results);
+    //resultsView.render(model.getSearchResultsPage());
     } catch (err) {
-        (0, _recipeViewJsDefault.default).renderError(err);
+        (0, _resultsViewJsDefault.default).renderError(err);
         throw err;
     }
 }
@@ -746,48 +748,206 @@ const controlSearchResults = async function() {
             console.log("no se ha ingresado un termino de busqueda.");
             return;
         }
+        // resetear página a 1 al iniciar nueva búsqueda
+        _modelJs.state.search.page = 1;
+        //  llama al método  resultsView.renderSpinner()
+        (0, _resultsViewJsDefault.default).renderSpinner();
         await _modelJs.loadSearchResults(query);
-        console.log("controlSearchResults=", _modelJs.state.search.results);
+        console.log("Antes de controlSearchResults=", _modelJs.getSearchResultsPage());
+        // render paginado (usa la función creada en model)
+        (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
     } catch (err) {
         console.log("error:", err);
+        (0, _resultsViewJsDefault.default).renderError('Hubo un error buscando recetas');
     }
 };
 //controlRecipes();// Invocar la funcion showRecipe.
 function init() {
+    console.log("Entra Init");
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
     (0, _searchViewsJsDefault.default).addHandlerSearch(controlSearchResults);
+    console.log("Sale Init");
 }
 init();
 
-},{"./views/RecipeView.js":"dfIpa","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","../js/model.js":"3QBkH","./views/searchViews.js":"Es71q"}],"dfIpa":[function(require,module,exports,__globalThis) {
+},{"../js/model.js":"3QBkH","./views/RecipeView.js":"dfIpa","./views/searchViews.js":"Es71q","./views/ResultsView.js":"CYzq3","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"3QBkH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state);
+//Crea la función asíncrona loadRecipe y pasa la variable id.
+parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
+parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
+parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage);
+var _configJs = require("./config.js");
+var _helpersJs = require("./helpers.js");
+const state = {
+    recipe: {},
+    search: {
+        query: '',
+        results: [],
+        Page: 1,
+        resultsPerPage: (0, _configJs.RES_PER_PAGE)
+    },
+    bookmarks: []
+};
+async function loadRecipe(id) {
+    try {
+        console.log('Entra loadRecipe y si ID es:', id);
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`);
+        const { recipe } = data.data; // Para visualizar los datos que se necesitan desplegar en la pantalla. 
+        console.log('Receta:', recipe);
+        //  // Desestructuración
+        state.recipe = {
+            id: recipe.id,
+            title: recipe.title,
+            publisher: recipe.publisher,
+            sourceUrl: recipe.source_url,
+            image: recipe.image_url,
+            servings: recipe.servings,
+            cookTime: recipe.cooking_time,
+            ingredients: recipe.ingredients
+        };
+        console.log('Receta despues de Desestructuracion:', state.recipe);
+    } catch (err) {
+        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+        throw err;
+    }
+}
+const loadSearchResults = async function name(query) {
+    try {
+        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}/?search=${query}`);
+        // // 🧠 Transformamos y almacenamos los resultados en el estado global
+        state.search.query = query;
+        state.search.results = data.data.recipes.map((rec)=>{
+            return {
+                id: rec.id,
+                title: rec.title,
+                publisher: rec.publisher,
+                image: rec.image_url
+            };
+        });
+    } catch (err) {
+        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
+    }
+};
+const getSearchResultsPage = function(page = state.search.page) {
+    console.log("Entrar a getSearchResultsPage");
+    state.search.page = page;
+    console.log("resultados: ", page);
+    const start = (page - 1) * state.search.resultsPerPage;
+    const end = page * state.search.resultsPerPage;
+    return state.search.results.slice(start, end);
+};
+
+},{"./config.js":"2hPh4","./helpers.js":"7nL9P","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"2hPh4":[function(require,module,exports,__globalThis) {
+// Declara y exporta la constante API_URL y asígnale la URL de la API que se está consumiendo
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_URL", ()=>API_URL);
+parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC);
+parcelHelpers.export(exports, "RES_PER_PAGE", ()=>RES_PER_PAGE);
+const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
+const TIMEOUT_SEC = 10;
+const RES_PER_PAGE = 10; // Agrega y exporta al archivo de config la constante 
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jnFvT":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"7nL9P":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getJSON", ()=>getJSON);
+const TIMEOUT_SEC = 5;
+const getJSON = async function(url) {
+    try {
+        console.log("URL", url);
+        const fetchPro = fetch(url);
+        console.log("fetchPro", fetchPro);
+        const res = await Promise.race([
+            fetchPro,
+            timeout(TIMEOUT_SEC)
+        ]);
+        console.log('Respuesta:', res); // enviar la consol la constante resp.
+        const data = await res.json(); // aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
+        console.log('Data:', data); // enviar a la consola la constante data.
+        // ❌ Valida si la respuesta fue exitosa
+        if (!res.ok) {
+            const message = data?.message || 'Unknown error';
+            throw new Error(`${message} (${res.status})`);
+        }
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
+const timeout = function(s) {
+    return new Promise(function(_, reject) {
+        setTimeout(function() {
+            reject(new Error(`Request took too long! Timeout after ${s} second`));
+        }, s * 1000);
+    });
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"dfIpa":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _fractionJs = require("fraction.js");
 var _fractionJsDefault = parcelHelpers.interopDefault(_fractionJs);
+var _viewJs = require("./View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 const icons = new URL(require("a0b82650a605f976")).href; // Parcel v2
-class RecipeView {
+class RecipeView extends (0, _viewJsDefault.default) {
     _errorMessage = 'We could not find that recipe. Please try another one!';
-    #parentElement = document.querySelector('.recipe');
-    #data;
-    // 🖼️ Renderiza la receta en el DOM
+    // #parentElement = document.querySelector('.recipe');
+    _parentEl = document.querySelector('.recipe');
+    //#data;
+    _data;
+    //  Renderiza la receta en el DOM
     render(data) {
-        console.log("entra valor", this.#parentElement);
-        this.#data = data; // Guarda los datos recibidos
-        this.#clear(); // Limpia el contenido anterior
-        const markup = this.#generateMarkup(); // Genera el nuevo HTML
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
+        console.log("entra valor", this._parentEl);
+        this._data = data; // Guarda los datos recibidos
+        this._clear(); // Limpia el contenido anterior
+        const markup = this._generateMarkup(); // Genera el nuevo HTML
+        this._parentEl.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
     }
-    // 🧹 Limpia el contenido del contenedor principal
-    #clear() {
-        this.#parentElement.innerHTML = '';
+    // Limpia el contenido del contenedor principal
+    _clear() {
+        this._parentEl.innerHTML = '';
     }
-    #generateMarkup() {
+    _generateMarkup() {
         console.log("entra a generateMarkup");
         return ` 
         <figure class="recipe__fig">
-          <img src="${this.#data.image}" alt="Tomato" class="recipe__img" />
+          <img src="${this._data.image}" alt="Tomato" class="recipe__img" />
           <h1 class="recipe__title">
-            <span>${this.#data.title}</span>
+            <span>${this._data.title}</span>
           </h1>
         </figure>
 
@@ -796,14 +956,14 @@ class RecipeView {
             <svg class="recipe__info-icon">
               <use href="${icons}#icon-clock"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--minutes">${this.#data.cookTime}</span>
+            <span class="recipe__info-data recipe__info-data--minutes">${this._data.cookTime}</span>
             <span class="recipe__info-text">minutes</span>
           </div>
           <div class="recipe__info">
             <svg class="recipe__info-icon">
               <use href="${icons}#icon-users"></use>
             </svg>
-            <span class="recipe__info-data recipe__info-data--people">${this.#data.servings}</span>
+            <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
             <span class="recipe__info-text">servings</span>
 
             <div class="recipe__info-buttons">
@@ -835,7 +995,7 @@ class RecipeView {
         <div class="recipe__ingredients">
           <h2 class="heading--2">Recipe ingredients</h2>
           <ul class="recipe__ingredient-list">
-          ${this.#data.ingredients.map((ing)=>{
+          ${this._data.ingredients.map((ing)=>{
             return `
               <li class="recipe__ingredient">
               <svg class="recipe__icon">
@@ -858,12 +1018,12 @@ class RecipeView {
           <h2 class="heading--2">How to cook it</h2>
           <p class="recipe__directions-text">
             This recipe was carefully designed and tested by
-            <span class="recipe__publisher">${this.#data.publisher}</span>. Please check out
+            <span class="recipe__publisher">${this._data.publisher}</span>. Please check out
             directions at their website.
           </p>
           <a
             class="btn--small recipe__btn"
-            href="${this.#data.sourceUrl}"
+            href="${this._data.sourceUrl}"
             target="_blank"
           >
             <span>Directions</span>
@@ -874,83 +1034,16 @@ class RecipeView {
         </div>
        `;
     }
-    // Función para renderizar el spinner Av1_23
-    renderSpinner() {
-        console.log("iniciando render");
-        const markup = `
-    <div class="spinner">
-      <svg>
-        <use href="${icons}#icon-loader"></use>
-      </svg>
-    </div>
-  `;
-        this.#parentElement.innerHTML = ''; // 23c. Limpiar el contenido previo
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // 23b. Insertar el spinner
-    }
     addHandlerRender(handler) {
         [
             'hashchange',
             'load'
         ].forEach((ev)=>window.addEventListener(ev, handler));
     }
-    renderError(message = this._errorMessage) {
-        const markup = `<div class="error">
-            <div>
-              <svg>
-                <use href="${icons}#icon-alert-triangle"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>`;
-        this.#clear(); // Limpia el contenido anterior
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
-    }
-    renderMessage(message = this._message) {
-        const markup = `<div class="error">
-            <div>
-              <svg>
-                <use href="${icons}#icon-smile"></use>
-              </svg>
-            </div>
-            <p>${message}</p>
-          </div>`;
-        this.#clear(); // Limpia el contenido anterior
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup); // Inserta en el DOM
-    }
 }
 exports.default = new RecipeView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","a0b82650a605f976":"aob6l","fraction.js":"md6n5"}],"jnFvT":[function(require,module,exports,__globalThis) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"aob6l":[function(require,module,exports,__globalThis) {
+},{"a0b82650a605f976":"aob6l","fraction.js":"md6n5","./View.js":"jSw21","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"aob6l":[function(require,module,exports,__globalThis) {
 module.exports = module.bundle.resolve("icons.7bd9dd61.svg") + "?" + Date.now();
 
 },{}],"md6n5":[function(require,module,exports,__globalThis) {
@@ -1341,122 +1434,81 @@ Licensed under the MIT license.
     }), v["default"] = v, v.Fraction = v, module.exports = v);
 })(this);
 
-},{}],"3QBkH":[function(require,module,exports,__globalThis) {
+},{}],"jSw21":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "state", ()=>state);
-//Crea la función asíncrona loadRecipe y pasa la variable id.
-parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe);
-parcelHelpers.export(exports, "loadSearchResults", ()=>loadSearchResults);
-var _configJs = require("./config.js");
-var _helpersJs = require("./helpers.js");
-const state = {
-    recipe: {},
-    search: {
-        query: '',
-        results: []
-    },
-    bookmarks: []
-};
-async function loadRecipe(id) {
-    try {
-        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`);
-        const { recipe } = data.data; // Para visualizar los datos que se necesitan desplegar en la pantalla. 
-        console.log('Receta:', recipe);
-        //  // Desestructuración
-        state.recipe = {
-            id: recipe.id,
-            title: recipe.title,
-            publisher: recipe.publisher,
-            sourceUrl: recipe.source_url,
-            image: recipe.image_url,
-            servings: recipe.servings,
-            cookTime: recipe.cooking_time,
-            ingredients: recipe.ingredients
-        };
-        console.log('Receta despues de Desestructuracion:', state.recipe);
-    } catch (err) {
-        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
-        throw err;
+const icons = new URL(require("fcd5427331ff87b4")).href; // Parcel v2
+class View {
+    _data;
+    render(data) {
+        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
+        this._data = data;
+        this._clear();
+        const markup = this._generateMarkup();
+        this._parentEl.insertAdjacentHTML('afterbegin', markup);
+    }
+    _clear() {
+        this._parentEl.innerHTML = '';
+    }
+    // Función para renderizar el spinner Av1_23
+    renderSpinner() {
+        console.log("iniciando render");
+        const markup = `
+    <div class="spinner">
+      <svg>
+        <use href="${icons}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+        this._parentEl.innerHTML = ''; // 23c. Limpiar el contenido previo
+        this._parentEl.insertAdjacentHTML('afterbegin', markup); // 23b. Insertar el spinner
+    }
+    renderError(message = this._errorMessage) {
+        const markup = `
+      <div class="error">
+        <div>
+          <svg>
+            <use href="${icons}#icon-alert-triangle"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+        this._clear();
+        this._parentEl.insertAdjacentHTML('afterbegin', markup);
+    }
+    renderMessage(message = this._message) {
+        const markup = `
+      <div class="message">
+        <div>
+          <svg>
+            <use href="${icons}#icon-smile"></use>
+          </svg>
+        </div>
+        <p>${message}</p>
+      </div>
+    `;
+        this._clear();
+        this._parentEl.insertAdjacentHTML('afterbegin', markup);
     }
 }
-const loadSearchResults = async function name(query) {
-    try {
-        const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}/?search=${query}`);
-        // // 🧠 Transformamos y almacenamos los resultados en el estado global
-        state.search.query = query;
-        state.search.results = data.data.recipes.map((rec)=>{
-            return {
-                id: rec.id,
-                title: rec.title,
-                publisher: rec.publisher,
-                image: rec.image_url
-            };
-        });
-    } catch (err) {
-        console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
-    }
-};
+exports.default = View;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./config.js":"2hPh4","./helpers.js":"7nL9P"}],"2hPh4":[function(require,module,exports,__globalThis) {
-// Declara y exporta la constante API_URL y asígnale la URL de la API que se está consumiendo
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "API_URL", ()=>API_URL);
-parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC);
-const API_URL = 'https://forkify-api.herokuapp.com/api/v2/recipes/';
-const TIMEOUT_SEC = 10;
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7nL9P":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "getJSON", ()=>getJSON);
-const TIMEOUT_SEC = 5;
-const getJSON = async function(url) {
-    try {
-        console.log("URL", url);
-        const fetchPro = fetch(url);
-        console.log("fetchPro", fetchPro);
-        const res = await Promise.race([
-            fetchPro,
-            timeout(TIMEOUT_SEC)
-        ]);
-        console.log('Respuesta:', res); // enviar la consol la constante resp.
-        const data = await res.json(); // aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
-        console.log('Data:', data); // enviar a la consola la constante data.
-        // ❌ Valida si la respuesta fue exitosa
-        if (!res.ok) {
-            const message = data?.message || 'Unknown error';
-            throw new Error(`${message} (${res.status})`);
-        }
-        return data;
-    } catch (err) {
-        throw err;
-    }
-};
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"Es71q":[function(require,module,exports,__globalThis) {
+},{"fcd5427331ff87b4":"aob6l","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"Es71q":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class SearchView {
-    #parentEl = document.querySelector('.search');
+    _parentEl = document.querySelector('.search');
     getQuery() {
-        const query = this.#parentEl.querySelector('.search__field').value;
-        this.#clearInput(); // Limpia el campo después de obtener el valor
+        const query = this._parentEl.querySelector('.search__field').value;
+        this._clearInput(); // Limpia el campo después de obtener el valor
         return query;
     }
-    #clearInput() {
-        this.#parentEl.querySelector('.search__field').value = '';
+    _clearInput() {
+        this._parentEl.querySelector('.search__field').value = '';
     }
     addHandlerSearch(handler) {
-        this.#parentEl.addEventListener('submit', function(e) {
+        this._parentEl.addEventListener('submit', function(e) {
             e.preventDefault();
             handler();
         });
@@ -1464,6 +1516,44 @@ class SearchView {
 }
 exports.default = new SearchView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"CYzq3":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("./View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+var _iconsSvg = require("url:../../img/icons.svg");
+var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// declarar ResultView como hija
+class ResultsView extends (0, _viewJsDefault.default) {
+    _parentEl = document.querySelector('.results');
+    _errorMessage = 'No recipes found for your query';
+    _message = '';
+    _generateMarkup() {
+        // Cada receta se convierte en un preview pequeño
+        return this._data.map((result)=>this._generateMarkupPreview(result)).join('');
+    }
+    _generateMarkupPreview(result) {
+        console.log("Entra a funcion _generateMarkupPreview ");
+        return `
+      <li class="preview">
+        <a class="preview__link" href="#${result.id}">
+          <figure class="preview__fig">
+            <img src="${result.image}" alt="${result.title}" />
+          </figure>
+          <div class="preview__data">
+            <h4 class="preview__title">${result.title}</h4>
+            <p class="preview__publisher">${result.publisher}</p>
+          </div>
+        </a>
+      </li>
+    `;
+    }
+}
+exports.default = new ResultsView();
+
+},{"./View.js":"jSw21","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fd0vu":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
+
+},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=forkify.4a59a05f.js.map
