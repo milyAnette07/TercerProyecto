@@ -1,15 +1,15 @@
 const TIMEOUT_SEC = 5;
 export const getJSON = async function (url) {
     try {
-        console.log("URL", url);
+        console.log("helpers.js-> URL", url);
         const fetchPro = fetch(url);
-        console.log("fetchPro", fetchPro);
+        console.log("helpers.js-> fetchPro", fetchPro);
         const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
-        console.log('Respuesta:', res); // enviar la consol la constante resp.
+        console.log('helpers.js-> res:', res); // enviar la consol la constante resp.
         const data = await res.json();// aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
-
-        console.log('Data:', data);  // enviar a la consola la constante data.
-        // ❌ Valida si la respuesta fue exitosa
+        console.log('helpers.js-> Data:', data);  // enviar a la consola la constante data.
+       
+        // Valida si la respuesta fue exitosa
         if (!res.ok) {
             const message = data?.message || 'Unknown error';
             throw new Error(`${message} (${res.status})`);

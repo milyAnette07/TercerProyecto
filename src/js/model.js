@@ -8,7 +8,7 @@ export const state = {
     search: {
         query: '',
         results: [],
-        Page: 1, // Page con el valor 1 por defecto.
+        page: 1, // Page con el valor 1 por defecto.
         resultsPerPage: RES_PER_PAGE, // resultsPerPage asígnale el valor de la constante RES_PER_PAGE.
     },       // Resultados de búsqueda (se implementará más adelante)
     bookmarks: [],    // Recetas guardadas por el usuario (se implementará más adelante)
@@ -17,11 +17,12 @@ export const state = {
 //Crea la función asíncrona loadRecipe y pasa la variable id.
 export async function loadRecipe(id) {
     try {
-        console.log('Entra loadRecipe y si ID es:', id);
+        console.log('Modelo.js ->Entra loadRecipe y si ID es:', id);
         const data = await getJSON(`${API_URL}${id}`);
+        console.log('Modelo.js -> valor del data:', data);
 
         const { recipe } = data.data; // Para visualizar los datos que se necesitan desplegar en la pantalla. 
-        console.log('Receta:', recipe);
+        console.log('Modelo.js -> Receta:', recipe);
 
 
 
@@ -37,7 +38,7 @@ export async function loadRecipe(id) {
             ingredients: recipe.ingredients,
         };
 
-        console.log('Receta despues de Desestructuracion:', state.recipe);
+        console.log('Modelo.js-> despues de Desestructuracion:', state.recipe);
     }
     catch (err) {
 
@@ -46,9 +47,11 @@ export async function loadRecipe(id) {
     }
 }
 export const loadSearchResults = async function name(query) {
-    try {
+    try 
+    {
+        console.log("modelo.js -> Funcion loadSearchResults", state.search.results);
         const data = await getJSON(`${API_URL}/?search=${query}`);
-        // // 🧠 Transformamos y almacenamos los resultados en el estado global
+        
         state.search.query = query;
         state.search.results = data.data.recipes.map(rec => {
             return {
@@ -57,8 +60,8 @@ export const loadSearchResults = async function name(query) {
                 publisher: rec.publisher,
                 image: rec.image_url,
             };
-            console.log("Funcion loadSearchResults", state.search.results);
         });
+         console.log("Funcion loadSearchResults", state.search.results);
     }
     catch (err) {
         console.log(`${err} 💥💥💥💥`);
@@ -67,12 +70,15 @@ export const loadSearchResults = async function name(query) {
 }
 //  la parte final del archivo crea una función expresada
 export const getSearchResultsPage = function (page = state.search.page) {
-    console.log("Entrar a getSearchResultsPage");
+    console.log("Modelo.js -> Entrar a getSearchResultsPage");
     state.search.page = page;
-    console.log("resultados: ", page);
+    console.log("Modelo.js -> resultado del page: ", page);
 
     const start = (page - 1) * state.search.resultsPerPage;
+    console.log("Modelo.js -> resultado del start: ", start);
     const end = page * state.search.resultsPerPage;
+    console.log("Modelo.js -> resultado del end: ", end);
+
 
     return state.search.results.slice(start, end);
 };

@@ -4,13 +4,13 @@ import View from './View.js';
 
 class RecipeView extends View {
   _errorMessage = 'We could not find that recipe. Please try another one!';
- // #parentElement = document.querySelector('.recipe');
- _parentEl = document.querySelector('.recipe');
+  // #parentElement = document.querySelector('.recipe');
+  _parentEl = document.querySelector('.recipe');
   //#data;
   _data;
   //  Renderiza la receta en el DOM
   render(data) {
-    console.log("entra valor", this._parentEl);
+    console.log("RecipeView.js-> entra valor", this._parentEl);
     this._data = data;           // Guarda los datos recibidos
     this._clear();               // Limpia el contenido anterior
     const markup = this._generateMarkup(); // Genera el nuevo HTML
@@ -22,7 +22,7 @@ class RecipeView extends View {
     this._parentEl.innerHTML = '';
   }
   _generateMarkup() {
-    console.log("entra a generateMarkup");
+    console.log("RecipeView.js->Entra a generateMarkup. ");
     return ` 
         <figure class="recipe__fig">
           <img src="${this._data.image}" alt="Tomato" class="recipe__img" />
@@ -114,6 +114,20 @@ class RecipeView extends View {
           </a>
         </div>
        `;
+
+  }
+  // Función para renderizar el spinner Av1_23
+  renderSpinner() {
+    console.log("RecipeView.js -> iniciando renderSpinner");
+    const markup = `
+    <div class="spinner">
+      <svg>
+        <use href="${icons}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+    this._parentEl.innerHTML = ''; // 23c. Limpiar el contenido previo
+    this._parentEl.insertAdjacentHTML('afterbegin', markup); // 23b. Insertar el spinner
   }
 
   addHandlerRender(handler) {

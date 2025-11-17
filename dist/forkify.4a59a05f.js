@@ -722,20 +722,22 @@ var _searchViewsJs = require("./views/searchViews.js");
 var _searchViewsJsDefault = parcelHelpers.interopDefault(_searchViewsJs);
 var _resultsViewJs = require("./views/ResultsView.js"); // Importa la clase ResultsView
 var _resultsViewJsDefault = parcelHelpers.interopDefault(_resultsViewJs);
+var _paginationViewJs = require("./views/paginationView.js"); // Importa la clase PaginationView
+var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
 //Importa todas las funciones como model.
 const recipeContainer = document.querySelector('.recipe');
-console.log(" valor:", recipeContainer);
+console.log("Controller.js-> valor:", recipeContainer);
 async function controlRecipes() {
     try {
         const id = window.location.hash.slice(1);
-        console.log(' ID recibido:', id);
+        console.log('Controller.js-> ID recibido:', id);
         if (!id) return;
-        console.log("llamar render");
-        (0, _resultsViewJsDefault.default).renderSpinner(); // 23d. Mostrar el spinner mientras carga
-        console.log("Salir render");
+        console.log("Controller.js-> llamar renderSpinner");
+        (0, _recipeViewJsDefault.default).renderSpinner(); // 23d. Mostrar el spinner mientras carga
+        console.log("Controller.js-> Salir renderSpinner");
+        console.log("Controller.js-> Entrar a model.loadRecipe con id:", id);
         await _modelJs.loadRecipe(id);
-        (0, _resultsViewJsDefault.default).render(_modelJs.state.search.results);
-    //resultsView.render(model.getSearchResultsPage());
+        (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
     } catch (err) {
         (0, _resultsViewJsDefault.default).renderError(err);
         throw err;
@@ -745,7 +747,7 @@ const controlSearchResults = async function() {
     try {
         const query = (0, _searchViewsJsDefault.default).getQuery();
         if (!query) {
-            console.log("no se ha ingresado un termino de busqueda.");
+            console.log("Controller.js-> no se ha ingresado un termino de busqueda.");
             return;
         }
         // resetear página a 1 al iniciar nueva búsqueda
@@ -753,24 +755,39 @@ const controlSearchResults = async function() {
         //  llama al método  resultsView.renderSpinner()
         (0, _resultsViewJsDefault.default).renderSpinner();
         await _modelJs.loadSearchResults(query);
-        console.log("Antes de controlSearchResults=", _modelJs.getSearchResultsPage());
+        console.log("Controller.js-> Antes de controlSearchResults=", _modelJs.getSearchResultsPage());
         // render paginado (usa la función creada en model)
         (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
+        // después del render de los resultados,
+        // pasa como parámetro el objeto de búsqueda (model.state.search)
+        (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
     } catch (err) {
         console.log("error:", err);
         (0, _resultsViewJsDefault.default).renderError('Hubo un error buscando recetas');
     }
 };
+function controlPagination(goToPage) {
+    console.log('Controller.js-> Inicio de controlPagination:', goToPage);
+    const page = +goToPage; // ← convertir a numero
+    console.log("Controller.js-> entra funcion controlPagination y su valor page=", page);
+    // Renderiza los resultados de la página solicitada
+    (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(page));
+    // Actualizar el estado
+    _modelJs.state.search.page = page;
+    // Renderiza los nuevos botones de paginación
+    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
+}
 //controlRecipes();// Invocar la funcion showRecipe.
 function init() {
-    console.log("Entra Init");
+    console.log(" Controller.js-> Entra Init");
     (0, _recipeViewJsDefault.default).addHandlerRender(controlRecipes);
     (0, _searchViewsJsDefault.default).addHandlerSearch(controlSearchResults);
-    console.log("Sale Init");
+    (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
+    console.log("Controller.js-> Sale Init");
 }
 init();
 
-},{"../js/model.js":"3QBkH","./views/RecipeView.js":"dfIpa","./views/searchViews.js":"Es71q","./views/ResultsView.js":"CYzq3","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"3QBkH":[function(require,module,exports,__globalThis) {
+},{"../js/model.js":"3QBkH","./views/RecipeView.js":"dfIpa","./views/searchViews.js":"Es71q","./views/ResultsView.js":"CYzq3","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./views/paginationView.js":"7NIiB"}],"3QBkH":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
@@ -785,17 +802,18 @@ const state = {
     search: {
         query: '',
         results: [],
-        Page: 1,
+        page: 1,
         resultsPerPage: (0, _configJs.RES_PER_PAGE)
     },
     bookmarks: []
 };
 async function loadRecipe(id) {
     try {
-        console.log('Entra loadRecipe y si ID es:', id);
+        console.log('Modelo.js ->Entra loadRecipe y si ID es:', id);
         const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}${id}`);
+        console.log('Modelo.js -> valor del data:', data);
         const { recipe } = data.data; // Para visualizar los datos que se necesitan desplegar en la pantalla. 
-        console.log('Receta:', recipe);
+        console.log('Modelo.js -> Receta:', recipe);
         //  // Desestructuración
         state.recipe = {
             id: recipe.id,
@@ -807,7 +825,7 @@ async function loadRecipe(id) {
             cookTime: recipe.cooking_time,
             ingredients: recipe.ingredients
         };
-        console.log('Receta despues de Desestructuracion:', state.recipe);
+        console.log('Modelo.js-> despues de Desestructuracion:', state.recipe);
     } catch (err) {
         console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
         throw err;
@@ -815,8 +833,8 @@ async function loadRecipe(id) {
 }
 const loadSearchResults = async function name(query) {
     try {
+        console.log("modelo.js -> Funcion loadSearchResults", state.search.results);
         const data = await (0, _helpersJs.getJSON)(`${(0, _configJs.API_URL)}/?search=${query}`);
-        // // 🧠 Transformamos y almacenamos los resultados en el estado global
         state.search.query = query;
         state.search.results = data.data.recipes.map((rec)=>{
             return {
@@ -826,16 +844,19 @@ const loadSearchResults = async function name(query) {
                 image: rec.image_url
             };
         });
+        console.log("Funcion loadSearchResults", state.search.results);
     } catch (err) {
         console.log(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
     }
 };
 const getSearchResultsPage = function(page = state.search.page) {
-    console.log("Entrar a getSearchResultsPage");
+    console.log("Modelo.js -> Entrar a getSearchResultsPage");
     state.search.page = page;
-    console.log("resultados: ", page);
+    console.log("Modelo.js -> resultado del page: ", page);
     const start = (page - 1) * state.search.resultsPerPage;
+    console.log("Modelo.js -> resultado del start: ", start);
     const end = page * state.search.resultsPerPage;
+    console.log("Modelo.js -> resultado del end: ", end);
     return state.search.results.slice(start, end);
 };
 
@@ -887,17 +908,17 @@ parcelHelpers.export(exports, "getJSON", ()=>getJSON);
 const TIMEOUT_SEC = 5;
 const getJSON = async function(url) {
     try {
-        console.log("URL", url);
+        console.log("helpers.js-> URL", url);
         const fetchPro = fetch(url);
-        console.log("fetchPro", fetchPro);
+        console.log("helpers.js-> fetchPro", fetchPro);
         const res = await Promise.race([
             fetchPro,
             timeout(TIMEOUT_SEC)
         ]);
-        console.log('Respuesta:', res); // enviar la consol la constante resp.
+        console.log('helpers.js-> res:', res); // enviar la consol la constante resp.
         const data = await res.json(); // aqui convierte  la respuesta a jason, para ello se delcara una constante data y no olvidar usar el await
-        console.log('Data:', data); // enviar a la consola la constante data.
-        // ❌ Valida si la respuesta fue exitosa
+        console.log('helpers.js-> Data:', data); // enviar a la consola la constante data.
+        // Valida si la respuesta fue exitosa
         if (!res.ok) {
             const message = data?.message || 'Unknown error';
             throw new Error(`${message} (${res.status})`);
@@ -931,7 +952,7 @@ class RecipeView extends (0, _viewJsDefault.default) {
     _data;
     //  Renderiza la receta en el DOM
     render(data) {
-        console.log("entra valor", this._parentEl);
+        console.log("RecipeView.js-> entra valor", this._parentEl);
         this._data = data; // Guarda los datos recibidos
         this._clear(); // Limpia el contenido anterior
         const markup = this._generateMarkup(); // Genera el nuevo HTML
@@ -942,7 +963,7 @@ class RecipeView extends (0, _viewJsDefault.default) {
         this._parentEl.innerHTML = '';
     }
     _generateMarkup() {
-        console.log("entra a generateMarkup");
+        console.log("RecipeView.js->Entra a generateMarkup. ");
         return ` 
         <figure class="recipe__fig">
           <img src="${this._data.image}" alt="Tomato" class="recipe__img" />
@@ -1033,6 +1054,19 @@ class RecipeView extends (0, _viewJsDefault.default) {
           </a>
         </div>
        `;
+    }
+    // Función para renderizar el spinner Av1_23
+    renderSpinner() {
+        console.log("RecipeView.js -> iniciando renderSpinner");
+        const markup = `
+    <div class="spinner">
+      <svg>
+        <use href="${icons}#icon-loader"></use>
+      </svg>
+    </div>
+  `;
+        this._parentEl.innerHTML = ''; // 23c. Limpiar el contenido previo
+        this._parentEl.insertAdjacentHTML('afterbegin', markup); // 23b. Insertar el spinner
     }
     addHandlerRender(handler) {
         [
@@ -1437,22 +1471,27 @@ Licensed under the MIT license.
 },{}],"jSw21":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-const icons = new URL(require("fcd5427331ff87b4")).href; // Parcel v2
+const icons = new URL(require("fcd5427331ff87b4")).href; // 
 class View {
     _data;
-    render(data) {
-        if (!data || Array.isArray(data) && data.length === 0) return this.renderError();
-        this._data = data;
-        this._clear();
-        const markup = this._generateMarkup();
-        this._parentEl.insertAdjacentHTML('afterbegin', markup);
-    }
     _clear() {
         this._parentEl.innerHTML = '';
     }
+    render(data) {
+        if (!data || Array.isArray(data) && data.length === 0) {
+            console.log("View.js-> entra a renderError");
+            return this.renderError();
+        }
+        this._data = data;
+        const markup = this._generateMarkup();
+        this._clear();
+        console.log("View.js-> Salir de funcion  render");
+        this._parentEl.insertAdjacentHTML('afterbegin', markup);
+    // 
+    }
     // Función para renderizar el spinner Av1_23
     renderSpinner() {
-        console.log("iniciando render");
+        console.log("Views.js-> iniciando renderSpinner");
         const markup = `
     <div class="spinner">
       <svg>
@@ -1460,10 +1499,12 @@ class View {
       </svg>
     </div>
   `;
+        console.log("Views.js-> iniciando renderSpinner-> _parentEl.valor=", this._parentEl);
         this._parentEl.innerHTML = ''; // 23c. Limpiar el contenido previo
         this._parentEl.insertAdjacentHTML('afterbegin', markup); // 23b. Insertar el spinner
     }
     renderError(message = this._errorMessage) {
+        console.log("View.js-> entro a renderError");
         const markup = `
       <div class="error">
         <div>
@@ -1476,6 +1517,7 @@ class View {
     `;
         this._clear();
         this._parentEl.insertAdjacentHTML('afterbegin', markup);
+        return markup;
     }
     renderMessage(message = this._message) {
         const markup = `
@@ -1521,39 +1563,120 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _viewJs = require("./View.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
-var _iconsSvg = require("url:../../img/icons.svg");
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+const icons = new URL(require("b799160e8a92a7be")).href;
 // declarar ResultView como hija
 class ResultsView extends (0, _viewJsDefault.default) {
     _parentEl = document.querySelector('.results');
     _errorMessage = 'No recipes found for your query';
     _message = '';
+    _generateMarkupPreview(result) {
+        console.log("ResultsView.js-> Entra a  funcion _generateMarkupPreview ");
+        return `
+      <li class="preview">
+            <a class="preview__link" href="#${result.id}">
+              <figure class="preview__fig">
+                <img src="${result.image}" alt="Test" />
+              </figure>
+              <div class="preview__data">
+                <h4 class="preview__title">${result.title}</h4>
+                <p class="preview__publisher">${result.publisher}</p>
+                <div class="preview__user-generated">
+                  <svg>
+                    <use href="${icons}#icon-user"></use>
+                  </svg>
+                </div>
+              </div>
+            </a>
+          </li>
+    `;
+    }
     _generateMarkup() {
         // Cada receta se convierte en un preview pequeño
         return this._data.map((result)=>this._generateMarkupPreview(result)).join('');
     }
-    _generateMarkupPreview(result) {
-        console.log("Entra a funcion _generateMarkupPreview ");
-        return `
-      <li class="preview">
-        <a class="preview__link" href="#${result.id}">
-          <figure class="preview__fig">
-            <img src="${result.image}" alt="${result.title}" />
-          </figure>
-          <div class="preview__data">
-            <h4 class="preview__title">${result.title}</h4>
-            <p class="preview__publisher">${result.publisher}</p>
-          </div>
-        </a>
-      </li>
-    `;
-    }
 }
 exports.default = new ResultsView();
 
-},{"./View.js":"jSw21","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fd0vu":[function(require,module,exports,__globalThis) {
-module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
+},{"./View.js":"jSw21","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","b799160e8a92a7be":"aob6l"}],"7NIiB":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _viewJs = require("./View.js"); //Importa la clase View
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+const icons = new URL(require("d937d4480f9ab689")).href; // Parcel v2 // Importa los iconos
+//Crea la clase PaginationView como hija de la clase Vista 
+class paginationView extends (0, _viewJsDefault.default) {
+    //Declara al elemento padre (_parentEl) como privado
+    _parentEl = document.querySelector('.pagination');
+    //Crea el método addHandlerClick por encima del método _generaMarkup. 
+    addHandlerClick(handler) {
+        console.log("PaginacionView.js-> Entra a addHandlerClick.");
+        // Utiliza el método addEventListener de this._parentEl
+        // y Una función anónima con el evento(e)  
+        this._parentEl.addEventListener('click', function(e) {
+            // (e.target), sobre este utilizar el método closest y pasarle como parámetro la clase del botón ('.btn--inline')
+            const btn = e.target.closest('.btn--inline');
+            if (!btn) return;
+            // Crea la constante goToPage y asígnale la expresión btn.dataset.goto;
+            const goToPage = btn.dataset.goto;
+            console.log("PaginacionView.js-> Imprime valor goToPage:", goToPage);
+            handler(goToPage);
+        });
+    }
+    // Crea el método privado _generateMarkup 
+    _generateMarkup() {
+        console.log('PaginacionView.js-> Entrando a _generateMarkup.', this._data);
+        // Declara la constante página actual (curPage) que será igual a this._data.page
+        const curPage = this._data.page;
+        // la constante numPages de la siguiente manera:
+        const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
+        console.log("paginationView.js-> valor numPages=", numPages);
+        // Valida si la página es igual a 1 y si el número de páginas es mayor a 1. 
+        if (curPage === 1 && numPages > 1) {
+            console.log("paginationView.js->Entra condicion (curPage === 1 && numPages > 1)");
+            return `
 
-},{}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
+            <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
+            <span>Page ${curPage + 1}</span>
+                <svg class="search__icon">
+                <use href="${icons}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            `;
+        }
+        // Valida si curPage es igual al número depáginas, es > 1
+        if (curPage === numPages && numPages > 1) {
+            console.log("paginationView.js->Entra condicion (curPage === numPages && numPages > 1)");
+            return `
+                    <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
+                        <span>Page${curPage - 1}</span>
+                        <svg class="search__icon">
+                        <use href="${icons}#icon-arrow-left"></use>
+                        </svg>
+                    </button>
+            `;
+        }
+        // Estando en cualquier página diferente a la página 1 y diferente a la ultima página. 
+        if (curPage < numPages && curPage !== 1) return `
+            <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
+            <span>Page ${curPage + 1}</span>
+                <svg class="search__icon">
+                <use href="${icons}#icon-arrow-right"></use>
+                </svg>
+            </button>
+            <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
+                <span>Page${curPage - 1}</span>
+                <svg class="search__icon">
+                <use href="${icons}#icon-arrow-left"></use>
+                </svg>
+            </button>
+
+            `;
+        // Estando en la página 1 y no existen más páginas. 
+        if (curPage === 1 && numPages === 1) return '';
+    }
+}
+exports.default = new paginationView();
+
+},{"./View.js":"jSw21","d937d4480f9ab689":"aob6l","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=forkify.4a59a05f.js.map
