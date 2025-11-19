@@ -30,7 +30,7 @@
 65C:\Users\mildr\Documents\forkify\node_modules\readdirp\index.d.ts134059724922616773 0
 43C:\Users\mildr\Documents\forkify\prettierrc134049628752401585 0
 89C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\features\queryselector.js134059724615192210 0
-45C:\Users\mildr\Documents\forkify\package.json134075690298085423 0
+45C:\Users\mildr\Documents\forkify\package.json134079917737675532 0
 77C:\Users\mildr\Documents\forkify\node_modules\source-map-js\lib\quick-sort.js134059724922585849 0
 120C:\Users\mildr\Documents\forkify\node_modules\msgpackr-extract\node_modules\node-gyp-build-optional-packages\optional.js134059724588816309 0
 77C:\Users\mildr\Documents\forkify\node_modules\caniuse-lite\data\regions\NE.js134059724613783135 0
